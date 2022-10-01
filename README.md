@@ -19,6 +19,21 @@ For this project, you will write a Packer template and a Terraform template to d
 ### Instructions
 **Your words here**
 
+
+
+#### import existing resource into terraform
+
+obtain the subscription id from the resource
+
+az group show --name legacy-resource-group --query id --output tsv
+
+use the output in this import command:
+
+terraform import azurerm_resource_group.legacy-resource-group --previous output
+
+This will allow you to use terraform with an existing resource group, in case you are not allowed to create a new one
+
+
 ### Output
 **Your words here**
 
