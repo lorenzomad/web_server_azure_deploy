@@ -14,3 +14,7 @@ variable "username" {
 variable "password" {
   description = "the password for the account of the virtual machine"
 }
+variable "counter" {
+  description = "the number of virtual machines to create"
+  type = number
+}

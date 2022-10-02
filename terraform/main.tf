@@ -2,7 +2,7 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "main" {
+resource "azurerm_resource_group" "Azuredevops" {
   name     = "Azuredevops"
   location = var.location
 }
@@ -10,8 +10,8 @@ resource "azurerm_resource_group" "main" {
 resource "azurerm_virtual_network" "main" {
   name                = "${var.prefix}-network"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.Azuredevops.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
 
   tags = {
     source = "Terraform"
@@ -20,7 +20,7 @@ resource "azurerm_virtual_network" "main" {
 
 resource "azurerm_subnet" "internal" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.main.name
+  resource_group_name  = azurerm_resource_group.Azuredevops.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.2.0/24"]
 
@@ -28,8 +28,8 @@ resource "azurerm_subnet" "internal" {
 
 resource "azurerm_network_security_group" "main" {
   name                = "${var.prefix}-nsg"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.Azuredevops.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
 
   security_rule {
     # allow inbound access from the virtual machines in the network
@@ -64,8 +64,8 @@ resource "azurerm_network_security_group" "main" {
 
 resource "azurerm_public_ip" "main" {
   name                = "${var.prefix}-publicIP"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
+  location            = azurerm_resource_group.Azuredevops.location
   allocation_method   = "Static"
 
   tags = {
@@ -75,8 +75,8 @@ resource "azurerm_public_ip" "main" {
 
 resource "azurerm_network_interface" "main" {
   name                = "${var.prefix}-nic"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
+  location            = azurerm_resource_group.Azuredevops.location
 
   ip_configuration {
     name                          = "internal"
@@ -92,8 +92,8 @@ resource "azurerm_network_interface" "main" {
 
 resource "azurerm_lb" "main" {
   name = "${var.prefix}-lb"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
+  location            = azurerm_resource_group.Azuredevops.location
   
   frontend_ip_configuration {
     name = "publicIPAddress"
@@ -109,8 +109,8 @@ resource "azurerm_lb" "main" {
 
 resource "azurerm_availability_set" "example" {
   name                = "${var.prefix}-aset"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.Azuredevops.location
+  resource_group_name = azurerm_resource_group.Azuredevops.name
 
   tags = {
     source = "Terraform"
@@ -118,9 +118,10 @@ resource "azurerm_availability_set" "example" {
 }
 
 resource "azurerm_virtual_machine" "main" {
-  name                             = "${var.prefix}-VM"
-  location                         = azurerm_resource_group.main.location
-  resource_group_name              = azurerm_resource_group.main.name
+  count = var.counter
+  name                             = "${var.prefix}-VM${count.index}"
+  location                         = azurerm_resource_group.Azuredevops.location
+  resource_group_name              = azurerm_resource_group.Azuredevops.name
   network_interface_ids = [
     azurerm_network_interface.main.id,
   ]
@@ -133,7 +134,7 @@ resource "azurerm_virtual_machine" "main" {
   }
 
   storage_os_disk {
-    name              = "${var.prefix}-VM-OS"
+    name              = "${var.prefix}-VM${var.counter}-OS"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
