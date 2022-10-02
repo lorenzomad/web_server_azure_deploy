@@ -20,6 +20,17 @@ For this project, you will write a Packer template and a Terraform template to d
 **Your words here**
 
 
+#### Use packer to create the image
+
+to create the image, run packer with the following command :
+packer build -var "varname=varvalue" ubuntu.pkr.hlc
+
+and add a -var for each of the variables related to your account:
+client_id
+client_secret
+subscription_id
+tenant_id
+
 
 #### import existing resource into terraform
 
