@@ -39,7 +39,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["apt-get update", "apt-get upgrade -y"]
+    inline          = ["apt-get update", "apt-get upgrade -y", "echo 'Hello, World!' > index.html", "nohup busybox httpd -f -p 80 &"]
     inline_shebang  = "/bin/sh -x"
   }
 
