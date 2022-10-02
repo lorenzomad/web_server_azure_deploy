@@ -1,42 +1,41 @@
 {
 	"variables": {
-		"client_id": "6a14d2f5-ce90-49cc-b0f4-3c25358d8ee5",
-		"client_secret": "1YS8Q~yKRl2VHTQlcXuyHtsIJWpyf1pJ.xS2Kaxs",
-		"subscription_id": "83ab2601-ced6-4391-b0e4-f54b470eb775",
-		"tenant_id": "f958e84a-92b8-439f-a62d-4f45996b6d07"
-	},
-	"builders": [{
-		"type": "azure-arm",
+		"client_id": "{{env `CLIENT_ID`}}",
+		"client_secret": "{{env `CLIENT_SECRET`}}",
+		"subscription_id": "{{env `SUBSCRIPTION_ID`}}",
+		"tenant_id": "{{env `TENANT_ID`}}"
+	  },
 
+	"builders": [
+	  {
+		"azure_tags": {
+		  "task": "Image deployment"
+		},
 		"client_id": "{{user `client_id`}}",
 		"client_secret": "{{user `client_secret`}}",
+		"image_offer": "UbuntuServer",
+		"image_publisher": "Canonical",
+		"image_sku": "18.04-LTS",
+		"location": "southcentralus",
+		"managed_image_name": "myPackerImage",
+		"managed_image_resource_group_name": "Azuredevops",
+		"os_type": "Linux",
 		"subscription_id": "{{user `subscription_id`}}",
 		"tenant_id": "{{user `tenant_id`}}",
+		"type": "azure-arm",
+		"vm_size": "Standard_DS2_v3"
+	  }
+	],
 
-		"os_type": "Linux",
-		"image_publisher": "Canonical",
-		"image_offer": "UbuntuServer",
-		"image_sku": "18.04-LTS",
-		"azure_tags": {
-			"task":"Image deployment"
-		},
-
-		"managed_image_resource_group_name": "Azuredevops",
-		"managed_image_name": "myPackerImage",
-
-		"location": "South Central US",
-		"vm_size": "Standard_DS2_v2"
-	}],
 	"provisioners": [{
-		
 		"inline": [
 			"apt-get update",
-			"apt-get upgrade -y",
-			"echo 'Hello, World!' > index.html",
-			"nohup busybox httpd -f -p 80 &"
+			"apt-get upgrade -y"
 		],
 		"inline_shebang": "/bin/sh -x",
 		"type": "shell",
 		"execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-	}]
-}
+	  }]
+	
+	
+  }
