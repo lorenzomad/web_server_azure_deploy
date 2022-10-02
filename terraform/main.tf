@@ -152,5 +152,6 @@ resource "azurerm_virtual_machine" "main" {
 
   tags = {
     source = "Terraform"
+    project = "azure_web_app"
   }
 }
